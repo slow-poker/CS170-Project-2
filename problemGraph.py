@@ -47,6 +47,27 @@ class Graph:
         #parent and best child point to each other
         pq[0].parent = parentNode
         parentNode.child = pq[0]
-         
-         
+        
+    def eliminate(self, parentNode):
+        q = []
+        for i in range(1, self.numFeatures+1):
+            if i not in parentNode.data:
+                 continue
+            childNode = Node(parentNode.data)
+            childNode.data.remove(i)
+            self.evaluate(childNode)
+            q.append(childNode)
+            print("\tUsing feature(s) " + str(childNode.data) + " accuracy is " + str(childNode.accuracy) )       
+        pq = sorted(q, key=self.orders_by_accuracy)
+        if pq[0].data:
+            print("\nFeature set " + str(pq[0].data) + " was best, accuracy is " + str(pq[0].accuracy) + "%\n")
+        else:
+             print("\nAn empty feature set was the best, accuracy is "+ str(pq[0].accuracy) + "%\n")
+
+        #parent and best child point to each other
+        pq[0].parent = parentNode
+        parentNode.child = pq[0]
+    
+
+            
     
