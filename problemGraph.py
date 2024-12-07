@@ -10,14 +10,11 @@ import random
 class Node: 
     def __init__(self, data):
             self.data = []
-            self.data.append(data)
-            self.data = list(filter(None, self.data)) #removes None from initialization
+            if data != None:
+                 self.data = data.copy()
             self.child = None
             self.parent = None
             self.accuracy = None
-
-    def __lt__(self, other):
-        return self.accuracy < other.accuracy
         
 class Graph:
     def __init__(self, numFeatures):
@@ -26,31 +23,30 @@ class Graph:
 
     @staticmethod
     def evaluate(currNode):
-        currNode.accuracy = random.uniform(0.00, 100.00)
+        currNode.accuracy = (int(random.uniform(0, 100) * 100))/100
+
+    #for priority queue sorting key
+    @staticmethod
+    def orders_by_accuracy(Node):
+         return Node.accuracy * -1
 
     #make children nodes, push them into priority queue, parent and child point to each other
     def expand(self, parentNode):
         #populate priority queue with children
-        pq = []
+        q = []
         for i in range(1, self.numFeatures + 1):
+            if i in parentNode.data:
+                 continue
             childNode = Node(parentNode.data)
             childNode.data.append(i)
             self.evaluate(childNode)
-            pq.append(childNode)    
-        pq.sort
-
-        #parent and child point to each other
+            q.append(childNode)
+            print("\tUsing feature(s) " + str(childNode.data) + " accuracy is " + str(childNode.accuracy) )       
+        pq = sorted(q, key = self.orders_by_accuracy)            
+        print("\nFeature set " + str(pq[0].data) + " was best, accuracy is " + str(pq[0].accuracy) + "%\n")
+        #parent and best child point to each other
         pq[0].parent = parentNode
         parentNode.child = pq[0]
-            
-        #TEST
-        for i in range(self.numFeatures):
-            node = pq[i]
-            print( str(node.accuracy) + "% accuracy using features: " + str(node.data))
-
-
-    def test(self):
-         self.expand(self.root)
          
          
     
