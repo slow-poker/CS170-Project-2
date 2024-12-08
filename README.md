@@ -14,6 +14,7 @@ Type the number of the algorithm you want to run.
 	:Using no features and "random" evaluation, I get an accuracy of 86.91%
 
 Beginning search
+
 	Using feature(s) [1] accuracy is 70.52
 	Using feature(s) [2] accuracy is 83.75
 	Using feature(s) [3] accuracy is 6.72
