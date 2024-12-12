@@ -20,7 +20,8 @@ class Classifier:
                 newData = (data-dataMin)/(dataMax-dataMin)
                 tempList.append(newData)
             normalizedSet.append(tempList)
-        return normalizedSet           
+        tempMatrix = [[row[i] for row in normalizedSet] for i in range(len(normalizedSet[0]))]
+        return tempMatrix           
             
     def train(self, fileName): #input training data into vectors
         #https://www.geeksforgeeks.org/python-program-to-read-file-word-by-word/
@@ -33,23 +34,29 @@ class Classifier:
         self._classSet = list(filter(None, self._classSet))    
         self._normFeatureSet = copy.deepcopy(self.normalizeData(self._featureSet))
 
-
     def test(self, testPoint): #find distance to all points, return label of closest
+        #normalize testPoint
+        transposed = [[row[i] for row in self._featureSet] for i in range(len(self._featureSet[0]))]
+        tempList = []
+        for featureList in transposed:
+            featureMax = max(featureList)
+            featureMin = min(featureList)
+            for data in testPoint:
+                newData = (data-featureMin)/(featureMax-featureMin)
+                tempList.append(newData)
+        testPoint = tempList.copy()
+
+        
         closestPointDist = sys.maxsize
         index = 0
         indexOfClosestPoint = 0
-        for allPoints in self._featureSet:
+        for allPoints in self._normFeatureSet:
             testDistance = self.distance(allPoints, testPoint)
             if(closestPointDist > testDistance):
                 closestPointDist = testDistance
                 indexOfClosestPoint = index
             index += 1
-
         return self._classSet[indexOfClosestPoint]
-
-
-
-
 
     @staticmethod
     def distance(startPoint, endPoint): #returns euclidean distance between two points
@@ -57,9 +64,3 @@ class Classifier:
         for i in range(0,len(startPoint)): #loop through all features
             sum += (endPoint[i]-startPoint[i])**2
         return math.sqrt(sum)
-
-
-
-#training instances are from 
-#compute euclidean distance from training points
-#return the class label of the nearest training point
