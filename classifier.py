@@ -1,4 +1,6 @@
 import copy
+import sys
+import math
 
 class Classifier:
     def __init__(self):
@@ -33,17 +35,28 @@ class Classifier:
 
 
     def test(self, testPoint): #find distance to all points, return label of closest
-        closestPoint = 0
-        for allPoints in self.featureSet:
-            if(closestPoint > self.distance(allPoints, testPoint)):
-                pass
+        closestPointDist = sys.maxsize
+        index = 0
+        indexOfClosestPoint = 0
+        for allPoints in self._featureSet:
+            testDistance = self.distance(allPoints, testPoint)
+            if(closestPointDist > testDistance):
+                closestPointDist = testDistance
+                indexOfClosestPoint = index
+            index += 1
+
+        return self._classSet[indexOfClosestPoint]
+
+
+
+
 
     @staticmethod
     def distance(startPoint, endPoint): #returns euclidean distance between two points
         sum = 0
         for i in range(0,len(startPoint)): #loop through all features
             sum += (endPoint[i]-startPoint[i])**2
-        return sum**0.5
+        return math.sqrt(sum)
 
 
 
