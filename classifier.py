@@ -12,16 +12,24 @@ class Classifier:
     def normalizeData(dataSet):
         normalizedSet = []
         transposed = [[row[i] for row in dataSet] for i in range(len(dataSet[0]))]
+        
         for featureCol in transposed:
             tempList = []
             dataMax = max(featureCol)
             dataMin = min(featureCol)
+            avg = sum(featureCol) / len(featureCol)
             for data in featureCol:
-                newData = (data-dataMin)/(dataMax-dataMin)
+                newData = (data-avg)/(dataMax-dataMin)
                 tempList.append(newData)
             normalizedSet.append(tempList)
         tempMatrix = [[row[i] for row in normalizedSet] for i in range(len(normalizedSet[0]))]
-        return tempMatrix           
+        
+        return tempMatrix       
+
+    def shallowTrain(self, normMatrix, classSet): #only for use in Validator testClassifier()
+        self._normFeatureSet = copy.deepcopy(normMatrix)
+        self._classSet = copy.deepcopy(classSet)
+
             
     def train(self, fileName): #input training data into vectors
         #https://www.geeksforgeeks.org/python-program-to-read-file-word-by-word/
@@ -36,13 +44,14 @@ class Classifier:
 
     def test(self, testPoint): #find distance to all points, return label of closest
         #normalize testPoint
-        transposed = [[row[i] for row in self._featureSet] for i in range(len(self._featureSet[0]))]
+        transposed = [[row[i] for row in self._normFeatureSet] for i in range(len(self._normFeatureSet[0]))]
         tempList = []
         for featureList in transposed:
             featureMax = max(featureList)
             featureMin = min(featureList)
+            avg = sum(featureList) / len(featureList)
             for data in testPoint:
-                newData = (data-featureMin)/(featureMax-featureMin)
+                newData = (data-avg)/(featureMax-featureMin)
                 tempList.append(newData)
         testPoint = tempList.copy()
 
@@ -54,13 +63,15 @@ class Classifier:
             testDistance = self.distance(allPoints, testPoint)
             if(closestPointDist > testDistance):
                 closestPointDist = testDistance
+                # print(str(testDistance))
                 indexOfClosestPoint = index
             index += 1
+        # print(str(indexOfClosestPoint))
         return self._classSet[indexOfClosestPoint]
 
     @staticmethod
     def distance(startPoint, endPoint): #returns euclidean distance between two points
         sum = 0
         for i in range(0,len(startPoint)): #loop through all features
-            sum += (endPoint[i]-startPoint[i])**2
+            sum += pow((endPoint[i]-startPoint[i]), 2)
         return math.sqrt(sum)
