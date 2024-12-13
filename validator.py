@@ -1,4 +1,5 @@
 import copy
+import time
 from classifier import *
 
 class Validator:
@@ -8,7 +9,6 @@ class Validator:
         self._classfier = self.selectClassifier(classifierType, fileName)
         self._normDataSet = copy.deepcopy(self._classfier._normFeatureSet)
         self._classSet = copy.deepcopy(self._classfier._classSet)
-        print(self._classSet)
     
     def selectClassifier(self, classifierType, fileName):
         match classifierType:
@@ -19,6 +19,7 @@ class Validator:
 
     def testClassifier(self):
         print("Validating Classifier...")
+        start = time.process_time()
         numSuccess = 0
 
         #features to keep -> features to remove
@@ -31,7 +32,7 @@ class Validator:
             del transposed[featureRemoveList[i]-1]
         filterFeatureMatrix = [[row[i] for row in transposed] for i in range(len(transposed[0]))]  
 
-        #save classSet
+        
         for ignoreIndex in range(0, len(filterFeatureMatrix)):
             trainingMatrix = copy.deepcopy(filterFeatureMatrix)
             leaveOutPoint = copy.deepcopy(trainingMatrix[ignoreIndex])
@@ -46,8 +47,9 @@ class Validator:
             else:
                 result = "FALSE"
             print("Testing point " + str(ignoreIndex + 1) + " | Predicted Class: " + str(testVal) + " | Actual Class: " + str(int(self._classSet[ignoreIndex])) + "| Result: " + result)
+        endTime = (time.process_time() - start)
         percentSucess = (numSuccess / len(self._classSet) ) * 100
-        print("Classification Accuracy: " + str(percentSucess) + "%")
+        print("Classification Accuracy: " + str(percentSucess) + "% | Time Spent: " + str(endTime) + " seconds")
 
         #reset self._normDataSet
         # self._classfier.train(self._fileName)
