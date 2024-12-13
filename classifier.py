@@ -63,10 +63,8 @@ class Classifier:
             testDistance = self.distance(allPoints, testPoint)
             if(closestPointDist > testDistance):
                 closestPointDist = testDistance
-                # print(str(testDistance))
                 indexOfClosestPoint = index
             index += 1
-        # print(str(indexOfClosestPoint))
         return self._classSet[indexOfClosestPoint]
 
     @staticmethod
