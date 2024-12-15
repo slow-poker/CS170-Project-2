@@ -6,6 +6,7 @@
 #push them to a linked list
 #
 import random
+from validator import *
 
 class Node: 
     def __init__(self, data):
@@ -17,13 +18,26 @@ class Node:
             self.accuracy = None
         
 class Graph:
-    def __init__(self, numFeatures):
+    def __init__(self, fileName):
          self.root = Node(None)
-         self.numFeatures = numFeatures
+         self.numFeatures = self.colInFile(fileName)
+         self.fileName = fileName
 
     @staticmethod
-    def evaluate(currNode):
-        currNode.accuracy = (int(random.uniform(0, 100) * 100))/100
+    def colInFile(fileName):
+         with open(fileName, 'r') as file:
+              line = file.readline()
+              numCol = len(line.split()) - 1 #first row is class
+              return numCol
+
+
+    def evaluate(self, currNode):
+        start = time.process_time()
+        # currNode.accuracy = (int(random.uniform(0, 100) * 100))/100
+        myValidator = Validator(currNode.data, 1, self.fileName)
+        currNode.accuracy = myValidator.testClassifier()
+        endTime = (time.process_time() - start)
+        # print("Evaluation time: " + str(endTime))
 
     #for priority queue sorting key
     @staticmethod
@@ -32,6 +46,7 @@ class Graph:
 
     #make children nodes, push them into priority queue, parent and child point to each other
     def expand(self, parentNode):
+        start = time.process_time()
         #populate priority queue with children
         q = []
         for i in range(1, self.numFeatures + 1):
@@ -43,10 +58,12 @@ class Graph:
             q.append(childNode)
             print("\tUsing feature(s) " + str(childNode.data) + " accuracy is " + str(childNode.accuracy) )       
         pq = sorted(q, key = self.orders_by_accuracy)            
-        print("\nFeature set " + str(pq[0].data) + " was best, accuracy is " + str(pq[0].accuracy) + "%\n")
+        print("Feature set " + str(pq[0].data) + " was best, accuracy is " + str(pq[0].accuracy) + "%")
         #parent and best child point to each other
         pq[0].parent = parentNode
         parentNode.child = pq[0]
+        endTime = (time.process_time() - start)
+        print("Expansion time:  " + str(endTime) + "\n")
         
     def eliminate(self, parentNode):
         q = []

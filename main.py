@@ -1,15 +1,14 @@
 from problemGraph import *
 
 print("""Welcome to Nolan's Feature Selection Algorithm.\n""")
-numFeatures = int(input("Please enter total number of features: "))
 algoType = input("""\nType the number of the algorithm you want to run.\n
         (1) Forward Selection Quick End
         (2) Forward Selection Full Search
         (3) Backward Selection Quick End
-        (4) Backward Selection Full Search
-        (5) Nolan's Special Algorithm\n\t:""")
+        (4) Backward Selection Full Search\n\t:""")
 
-myGraph = Graph(numFeatures)
+myGraph = Graph("titanic clean.txt")
+numFeatures = myGraph.numFeatures
 
 if int(algoType) == 3 or int(algoType) == 4:
         #populate root features

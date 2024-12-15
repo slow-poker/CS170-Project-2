@@ -7,52 +7,73 @@ class Validator:
         self._fileName = fileName
         self._featureSubset = featureSubset #list of features
         self._classfier = self.selectClassifier(classifierType, fileName)
-        self._normDataSet = copy.deepcopy(self._classfier._normFeatureSet)
-        self._classSet = copy.deepcopy(self._classfier._classSet)
+        
+        self._normDataSet = []
+        for row in self._classfier._normFeatureSet:
+            self._normDataSet.append(row)
+        
+        self._classSet = []
+        for row in self._classfier._classSet:
+            self._classSet.append(row)
     
     def selectClassifier(self, classifierType, fileName):
         match classifierType:
-            case 1:
+            case 1: #nearest neighbor
                 myClassifier = Classifier()
                 myClassifier.train(fileName)
                 return myClassifier
 
     def testClassifier(self):
-        print("Validating Classifier...")
         start = time.process_time()
-        numSuccess = 0
 
-        #features to keep -> features to remove
-        allFeatures = list(range(1, len(self._normDataSet[0]) + 1 ))
-        featureRemoveList = [x for x in allFeatures if x not in self._featureSubset]
-
-        #remove features not in keep list
-        transposed = [[row[i] for row in self._normDataSet] for i in range(len(self._normDataSet[0]))]
-        for i in reversed(range(len(featureRemoveList))):
-            del transposed[featureRemoveList[i]-1]
-        filterFeatureMatrix = [[row[i] for row in transposed] for i in range(len(transposed[0]))]  
-
+        #transposing is too slow, c++ logic time
+        filterFeatureMatrix = []
         
+        for row in self._normDataSet:
+            filteredList = []
+            
+            for index in self._featureSubset: #index-1
+                
+                filteredList.append(row[index-1])
+            filterFeatureMatrix.append(filteredList)
+        
+        numSuccess = 0.0
         for ignoreIndex in range(0, len(filterFeatureMatrix)):
-            trainingMatrix = copy.deepcopy(filterFeatureMatrix)
-            leaveOutPoint = copy.deepcopy(trainingMatrix[ignoreIndex])
+            trainingMatrix = []
+            for row in filterFeatureMatrix:
+                trainingMatrix.append(row)
+
+            leaveOutPoint = []
+            for element in trainingMatrix[ignoreIndex]:
+                leaveOutPoint.append(element)
+            # print(leaveOutPoint)
+          
             del trainingMatrix[ignoreIndex]
-            tempClassSet = copy.deepcopy(self._classSet)      
+
+            tempClassSet = [] 
+            # print(str(len(filterFeatureMatrix)))
+            # print(str(len(self._classSet)))
+            # print(str(ignoreIndex))
+            for element in self._classSet:
+                tempClassSet.append(element)  
             del tempClassSet[ignoreIndex]
-            self._classfier.shallowTrain(trainingMatrix, tempClassSet)                
+            
+            self._classfier.shallowTrain(trainingMatrix, tempClassSet) 
             testVal = int(self._classfier.test(leaveOutPoint))
+           
             if testVal == int(self._classSet[ignoreIndex]):
                 result = "TRUE"
                 numSuccess += 1
             else:
                 result = "FALSE"
-            print("Testing point " + str(ignoreIndex + 1) + " | Predicted Class: " + str(testVal) + " | Actual Class: " + str(int(self._classSet[ignoreIndex])) + "| Result: " + result)
+            # print("Testing point " + str(ignoreIndex + 1) + " | Predicted Class: " + str(testVal) + " | Actual Class: " + str(int(self._classSet[ignoreIndex])) + "| Result: " + result)
         endTime = (time.process_time() - start)
         percentSucess = (numSuccess / len(self._classSet) ) * 100
-        print("Classification Accuracy: " + str(percentSucess) + "% | Time Spent: " + str(endTime) + " seconds")
+        
+        # print("testClassifier() " +str(endTime) + " Seconds")
+        # print("Classification Accuracy: " + str(percentSucess) + "% | Time Spent: " + str(endTime) + " seconds")
 
-        #reset self._normDataSet
-        # self._classfier.train(self._fileName)
+        return percentSucess
 
                 
 
