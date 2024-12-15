@@ -24,7 +24,7 @@ class Validator:
                 return myClassifier
 
     def testClassifier(self):
-        start = time.process_time()
+        # start = time.process_time()
 
         #transposing is too slow, c++ logic time
         filterFeatureMatrix = []
@@ -67,7 +67,7 @@ class Validator:
             else:
                 result = "FALSE"
             # print("Testing point " + str(ignoreIndex + 1) + " | Predicted Class: " + str(testVal) + " | Actual Class: " + str(int(self._classSet[ignoreIndex])) + "| Result: " + result)
-        endTime = (time.process_time() - start)
+        # endTime = (time.process_time() - start)
         percentSucess = (numSuccess / len(self._classSet) ) * 100
         
         # print("testClassifier() " +str(endTime) + " Seconds")

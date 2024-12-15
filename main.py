@@ -1,5 +1,16 @@
 from problemGraph import *
 
+# Group: Nolan Vernon - nvern003
+# - Small Dataset Results:
+# - Forward: Feature Subset: {3,5}, Acc: 92.0%
+# - Backward: Feature Subset: {2, 3, 4, 5} Acc: 83.0%
+# - Large Dataset Results:
+# - Forward: Feature Subset: {1, 27}, Acc: 95.5%
+# - Backward: Feature Subset: {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39}, Acc: 71.1%
+# - Titanic Dataset Results:
+# - Forward: Feature Subset: {2, 5}, Acc: 78.01%
+# - Backward: Feature Subset: {2}, Acc: 78.01%
+
 print("""Welcome to Nolan's Feature Selection Algorithm.\n""")
 algoType = input("""\nType the number of the algorithm you want to run.\n
         (1) Forward Selection Quick End

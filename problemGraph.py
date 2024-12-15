@@ -32,11 +32,11 @@ class Graph:
 
 
     def evaluate(self, currNode):
-        start = time.process_time()
+     #    start = time.process_time()
         # currNode.accuracy = (int(random.uniform(0, 100) * 100))/100
         myValidator = Validator(currNode.data, 1, self.fileName)
         currNode.accuracy = myValidator.testClassifier()
-        endTime = (time.process_time() - start)
+     #    endTime = (time.process_time() - start)
         # print("Evaluation time: " + str(endTime))
 
     #for priority queue sorting key
